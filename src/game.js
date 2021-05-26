@@ -1,3 +1,4 @@
+import style from "./main.css";
 import Phaser, {Game} from 'phaser';
 import BootScene from './scenes/BootScene';
 import TitleScene from './scenes/TitleScene';

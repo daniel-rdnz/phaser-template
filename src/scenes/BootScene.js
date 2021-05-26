@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-
+import { Scene } from "phaser";
 
 class BootScene extends Scene {
   constructor() {
@@ -7,13 +6,12 @@ class BootScene extends Scene {
   }
 
   preload() {
-  
-     
+    this.load.image("player", "assets/sprite/player_.png");
+    this.load.image('light', 'assets/sprite/light.png');
   }
 
-
   create() {
-    this.scene.start('scene-game');
+    this.scene.start("scene-game");
   }
 }
 
