@@ -1,23 +1,15 @@
-import { Scene } from 'phaser';
-
+import { Scene } from 'phaser'
 
 class GameOverScene extends Scene {
   constructor() {
-    super("scene-gameover");
+    super('scene-gameover')
   }
 
-  preload() {
-   
-  }
+  preload() {}
 
+  create() {}
 
-  create() {
-   
-  }
-
-  update () {
-   
-  }
+  update() {}
 }
 
-export default GameOverScene;
+export default GameOverScene

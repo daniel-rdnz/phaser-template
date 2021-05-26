@@ -1,36 +1,36 @@
-import Phaser from "phaser";
+import Phaser from 'phaser'
 
 class SpotLight {
-  light;
-  mask;
+  light
+  mask
   constructor(scene) {
     this.light = scene.make.sprite({
       x: scene.game.config.width / 2,
       y: scene.game.config.height / 2,
-      key: "light",
-      add: false,
-    });
+      key: 'light',
+      add: false
+    })
 
     scene.tweens.add({
       targets: this.light,
       scaleX: 1.65,
       scaleY: 1.65,
       duration: 80,
-      ease: "Sine.easeInOut",
+      ease: 'Sine.easeInOut',
       loop: -1,
-      yoyo: true,
-    });
+      yoyo: true
+    })
 
-    this.mask = new Phaser.Display.Masks.BitmapMask(scene, this.light);
+    this.mask = new Phaser.Display.Masks.BitmapMask(scene, this.light)
   }
 
   getMask() {
-      return this.mask
+    return this.mask
   }
 
   getLight() {
     return this.light
-}
+  }
 }
 
-export default SpotLight;
+export default SpotLight
