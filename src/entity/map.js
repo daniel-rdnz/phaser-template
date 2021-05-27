@@ -1,13 +1,10 @@
 // import Phaser from 'phaser'
 
 class Map {
+  currentRoom;
   constructor(scene, maxSize = 10, minSize = 5, width, height) {
     this.scene = scene
-  
-    this.walls = scene.physics.add.staticGroup()
-
-    this.floors = scene.add.group()
-
+    this.currentRoom;
     this.room_max_size = maxSize
     this.room_min_size = minSize
     this.max_rooms = 1
@@ -25,14 +22,31 @@ class Map {
   }
 
   create() {
-    this.makeMap()
+    this.#makeMap()
   }
 
   getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min
   }
 
-  Room(x, y, w, h) {
+  getCurrentRoom() {
+    return this.room
+  }
+
+
+  #makeMap() {
+    const w = this.getRandom(this.room_min_size, this.room_max_size) * 16
+    const h = this.getRandom(this.room_min_size, this.room_max_size) * 16
+
+    const x = this.getRandom(1, this.width / 16 - (w / 16 + 1)) * 16
+    const y = this.getRandom(1, this.height / 16 - (w / 16 + 1)) * 16
+
+    this.room = new Room(this.scene, x, y, w, h)
+  }
+}
+
+class Room {
+  constructor(scene, x, y, w, h) {
     this.x1 = x
     this.y1 = y
     this.x2 = x + w
@@ -41,33 +55,27 @@ class Map {
     var center_x = (this.x1 + this.x2) / 2
     var center_y = (this.y1 + this.y2) / 2
     this.center_coords = { x: center_x, y: center_y }
-  }
 
-  createFloor(x, y) {
-    const fl = this.floors.create(x, y, 'floor')
-  }
+    this.walls = scene.physics.add.staticGroup()
+    this.floors = scene.add.group()
 
-  createRoom(x1, x2, y1, y2) {
-    for (let x = x1; x < x2; x += 16) {
-      for (let y = y1; y < y2; y += 16) {
+    this.createRoom()
+  }
+  createRoom() {
+    for (let x = this.x1; x < this.x2; x += 16) {
+      for (let y = this.y1; y < this.y2; y += 16) {
         this.createFloor(x, y)
-        if (y === y1 || y === y2 - 16 || x === x1 || x === x2 - 16) {
+        if (y === this.y1 || y === this.y2 - 16 || x === this.x1 || x === this.x2 - 16) {
           this.walls.create(x, y, 'wall')
         }
       }
     }
   }
 
-  makeMap() {
-    const w = this.getRandom(this.room_min_size, this.room_max_size) * 16
-    const h = this.getRandom(this.room_min_size, this.room_max_size) * 16
-
-    const x = this.getRandom(1, this.width / 16 - (w / 16 + 1)) * 16
-    const y = this.getRandom(1, this.height / 16 - (w / 16 + 1)) * 16
-
-    this.createRoom(x, x + w, y, y + h)
-    this.Room(x, y, w, h)
+  createFloor(x, y) {
+    const fl = this.floors.create(x, y, 'floor')
   }
+  
 }
 
 export default Map

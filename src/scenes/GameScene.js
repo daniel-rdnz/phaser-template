@@ -10,7 +10,7 @@ class GameScene extends Scene {
   preload() {
     this.map = new Map(this, 30, 10, this.game.config.width, this.game.config.height)
     this.map.create()
-    const roomCenter = this.map.center_coords
+    const roomCenter = this.map.getCurrentRoom().center_coords
     //PLAYER INSTANCE
     this.player = new Player({
       scene: this,
@@ -18,12 +18,11 @@ class GameScene extends Scene {
       y: roomCenter.y,
       sprite: 'player'
     })
-
+    
     //SPOTLIGHT INSTANCE
     this.spotlight = new SpotLight(this)
     this.player.setMask(this.spotlight.getMask())
-
-    this.physics.add.collider(this.player, this.map.walls)
+    this.physics.add.collider(this.player, this.map.getCurrentRoom().walls)
   }
 
   update(time, delta) {
