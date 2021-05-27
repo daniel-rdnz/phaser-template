@@ -8,6 +8,8 @@ class BootScene extends Scene {
   preload() {
     this.load.image('player', 'assets/sprite/player_.png')
     this.load.image('light', 'assets/sprite/light.png')
+    this.load.image("wall", "assets/sprite/wall.png");
+    this.load.image("floor", "assets/sprite/floor.png");
   }
 
   create() {

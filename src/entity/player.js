@@ -19,20 +19,21 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     //this.hp = new HealthBar(config.scene, this.x - 5, this.y - this.height/ 2 - 3, 200);
   }
   moveLeft() {
-    this.x -= 1
+    this.body.setVelocityX(-100)
     this.scaleX = -1
   }
   moveRight() {
-    this.x += 1
+    this.body.setVelocityX(100)
     this.scaleX = 1
   }
   moveDown() {
-    this.y += 1
+    this.body.setVelocityY(100)
   }
   moveUp() {
-    this.y -= 1
+    this.body.setVelocityY(-100)
   }
   preUpdate(time, delta) {
+    this.body.setVelocity(0)
     if (this.A.isDown || this.LEFT.isDown) {
       this.moveLeft()
     }
