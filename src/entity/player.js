@@ -4,6 +4,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.sprite)
 
+    this.setOrigin(0.5, 0.5)
     this.direction = -1
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
@@ -19,20 +20,21 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     //this.hp = new HealthBar(config.scene, this.x - 5, this.y - this.height/ 2 - 3, 200);
   }
   moveLeft() {
-    this.x -= 1
-    this.scaleX = -1
+    this.body.setVelocityX(-100)
+    this.flipX = true
   }
   moveRight() {
-    this.x += 1
-    this.scaleX = 1
+    this.body.setVelocityX(100)
+    this.flipX = false
   }
   moveDown() {
-    this.y += 1
+    this.body.setVelocityY(100)
   }
   moveUp() {
-    this.y -= 1
+    this.body.setVelocityY(-100)
   }
   preUpdate(time, delta) {
+    this.body.setVelocity(0)
     if (this.A.isDown || this.LEFT.isDown) {
       this.moveLeft()
     }
