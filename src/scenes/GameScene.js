@@ -18,6 +18,8 @@ class GameScene extends Scene {
     //SPOTLIGHT INSTANCE
     this.spotlight = new SpotLight(this)
     this.player.setMask(this.spotlight.getMask())
+
+    this.cameras.main.setZoom(1)
   }
 
   update(time, delta) {
