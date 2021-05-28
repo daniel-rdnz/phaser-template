@@ -38,8 +38,8 @@ class Map {
     const w = this.getRandom(this.room_min_size, this.room_max_size) * 16
     const h = this.getRandom(this.room_min_size, this.room_max_size) * 16
 
-    const x = this.getRandom(1, this.width / 16 - (w / 16 + 1)) * 16
-    const y = this.getRandom(1, this.height / 16 - (w / 16 + 1)) * 16
+    const x = (this.width - w) / 2
+    const y = (this.height - h) / 2
 
     this.room = new Room(this.scene, x, y, w, h)
   }
@@ -73,7 +73,7 @@ class Room {
   }
 
   createFloor(x, y) {
-    const fl = this.floors.create(x, y, 'floor')
+    this.floors.create(x, y, 'floor')
   }
   
 }
