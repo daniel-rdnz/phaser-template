@@ -1,4 +1,5 @@
 // import Phaser from 'phaser'
+const perlin = require('../lib/perlin.js')
 
 class Map {
   currentRoom;
@@ -58,6 +59,7 @@ class Room {
 
     this.walls = scene.physics.add.staticGroup()
     this.floors = scene.add.group()
+    this.furniture = scene.physics.add.staticGroup()
 
     this.createRoom()
   }
@@ -73,7 +75,13 @@ class Room {
   }
 
   createFloor(x, y) {
+    const possibleElements = ['bed', 'closet', 'table']
     this.floors.create(x, y, 'floor')
+    perlin.noise.seed(Math.random());
+    for (const element of possibleElements) {
+      const noise = Math.abs(perlin.noise.simplex2(x, y))
+      this.furniture.create(noise * this.x1, noise * this.y2, element)
+    }
   }
   
 }

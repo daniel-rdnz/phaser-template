@@ -8,7 +8,7 @@ class GameScene extends Scene {
     super('scene-game')
   }
   preload() {
-    this.map = new Map(this, 30, 10, this.game.config.width, this.game.config.height)
+    this.map = new Map(this, 40, 20, this.game.config.width, this.game.config.height)
     this.map.create()
     const roomCenter = this.map.getCurrentRoom().center_coords
     //PLAYER INSTANCE
