@@ -33,6 +33,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   moveUp() {
     this.body.setVelocityY(-100)
   }
+  
+  setColliders(group){
+    this.scene.physics.add.collider(this, group)
+  }
   preUpdate(time, delta) {
     this.body.setVelocity(0)
     if (this.A.isDown || this.LEFT.isDown) {
