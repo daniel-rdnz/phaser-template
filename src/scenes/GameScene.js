@@ -18,11 +18,12 @@ class GameScene extends Scene {
       y: roomCenter.y,
       sprite: 'player'
     })
-    
+
     //SPOTLIGHT INSTANCE
     this.spotlight = new SpotLight(this)
     this.player.setMask(this.spotlight.getMask())
-    this.physics.add.collider(this.player, this.map.getCurrentRoom().walls)
+    
+    this.player.setColliders(this.map.getCurrentRoom().walls)
   }
 
   update(time, delta) {
