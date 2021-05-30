@@ -13,6 +13,8 @@ class BootScene extends Scene {
     this.load.image("bed", "assets/sprite/bed.png");
     this.load.image("closet", "assets/sprite/closet.png");
     this.load.image("table", "assets/sprite/table.png");
+    this.load.image("topWall", "assets/sprite/topWall.png");
+    this.load.image("sideWall", "assets/sprite/sideWall.png");
   }
 
   create() {

@@ -65,14 +65,33 @@ class Room {
     this.createFurniture()
   }
   createRoom() {
+    const walls = []
+    const doorProbability = 90
     for (let x = this.x1; x < this.x2; x += 16) {
       for (let y = this.y1; y < this.y2; y += 16) {
         this.createFloor(x, y)
-        if (y === this.y1 || y === this.y2 - 16 || x === this.x1 || x === this.x2 - 16) {
-          this.walls.create(x, y, 'wall')
+        const xLimit = x > this.x1 && x < this.x2 - 16
+        const yLimit = y > this.y1 && y < this.y2 - 16
+        const createDoor = getRandom(0, 100) > doorProbability
+        if (y == this.y1 && xLimit) {
+          // Top
+          this.walls.create(x, y - 24, 'topWall')
+        } else if (x === this.x1 && yLimit && !createDoor) {
+          // Left
+          const wall = this.walls.create(x, y, 'sideWall')
+          wall.angle = 90
+        } else if (x === this.x2 - 16 && yLimit && !createDoor) {
+          // Right
+          const wall = this.walls.create(x, y, 'sideWall')
+          wall.angle = -90
+        } else if (y === this.y2 - 16 && xLimit && !createDoor) {
+          // Down
+          this.walls.create(x, y, 'sideWall')
         }
       }
     }
+    console.table(walls)
+    console.log({ x1: this.x1, x2: this.x2 - 16, y1: this.y1, y2: this.y2 - 16 })
   }
 
   createFloor(x, y) {
@@ -80,6 +99,7 @@ class Room {
   }
 
   createFurniture () {
+    const gap = 50
     const usedPositions = []
     const possibleElements = ['bed', 'closet', 'table']
     let tries = 0
@@ -89,7 +109,7 @@ class Room {
         return true
       }
       for (const {possibleX, possibleY} of usedPositions) {
-        if(posX > possibleX + 50 && posY > possibleY + 50) {
+        if((posX > possibleX + gap || posX < possibleX - gap) && (posY > possibleY + gap || posY < possibleY - gap)) {
           return true
         }
       }
@@ -103,8 +123,8 @@ class Room {
       const noise = Math.abs(perlin.noise.simplex2(x, y))
       const possibleX = this.x1 + (noise * getRandom(20, this.width))  
       const possibleY = this.y1 + (noise * getRandom(20, this.height))
-      if (possibleX > this.x1 + 50 && possibleX < this.x2 - 50
-        && possibleY > this.y1 + 50 && possibleY < this.y2 - 50
+      if (possibleX > this.x1 + gap && possibleX < this.x2 - gap
+        && possibleY > this.y1 + gap && possibleY < this.y2 - gap
         && validateUsedPositions(possibleX, possibleY)) {
         const possiblePosition = {possibleX, possibleY}
         usedPositions.push(possiblePosition)
