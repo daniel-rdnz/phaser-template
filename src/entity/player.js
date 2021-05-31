@@ -8,7 +8,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
 
-    this.body.setSize(32, 32)
+    this.body.setSize(32, 34)
+    this.body.setOffset(0, 16)
 
     this.A = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
     this.W = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
