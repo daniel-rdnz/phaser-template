@@ -5,9 +5,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     super(config.scene, config.x, config.y, config.sprite)
 
     this.setOrigin(0.5, 0.5)
-    this.direction = -1
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
+
+    this.body.setSize(32, 34)
+    this.body.setOffset(0, 16)
 
     this.A = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
     this.W = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
@@ -39,6 +41,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   preUpdate(time, delta) {
     this.body.setVelocity(0)
+    this.setDepth(this.y)
     if (this.A.isDown || this.LEFT.isDown) {
       this.moveLeft()
     }
