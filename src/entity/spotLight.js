@@ -13,9 +13,9 @@ class SpotLight {
 
     scene.tweens.add({
       targets: this.light,
-      scaleX: 1.65,
-      scaleY: 1.65,
-      duration: 80,
+      scaleX: 1.50,
+      scaleY: 1.50,
+      duration: 100,
       ease: 'Sine.easeInOut',
       loop: -1,
       yoyo: true

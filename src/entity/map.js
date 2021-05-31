@@ -44,12 +44,13 @@ class Map {
     const x = (this.width - w) / 2
     const y = (this.height - h) / 2
 
-    this.room = new Room(this.scene, x, y, w, h)
+    this.room = new Room(this.scene, x, y, w, h, this.mask)
   }
 }
 
 class Room {
-  constructor(scene, x, y, w, h) {
+  constructor(scene, x, y, w, h, mask) {
+    this.mask = mask
     this.x1 = x
     this.y1 = y
     this.x2 = x + w
@@ -146,7 +147,9 @@ class Room {
   }
 
   createFloor(x, y) {
-    this.floors.create(x, y + 8, 'atlas').setFrame('floor')
+    const floor = this.floors.create(x, y + 16, 'atlas')
+    floor.setFrame('floor')
+    floor.setMask(this.mask)
   }
 
   #createWall(
@@ -233,7 +236,7 @@ class Room {
     for (const element of possibleElements) {
       const { possibleX, possibleY, set } = findPosition()
       if (set) {
-        this.furniture.create(possibleX, possibleY, element)
+        this.furniture.create(possibleX, possibleY, element).setMask(this.mask)
       }
     }
   }
