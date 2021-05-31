@@ -1,6 +1,8 @@
 // import Phaser from 'phaser'
 const perlin = require('../lib/perlin.js')
 
+const spriteSize = 32
+
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min
 }
@@ -38,8 +40,8 @@ class Map {
   }
 
   #makeMap() {
-    const w = getRandom(this.room_min_size, this.room_max_size) * 16
-    const h = getRandom(this.room_min_size, this.room_max_size) * 16
+    const w = getRandom(this.room_min_size, this.room_max_size) * spriteSize
+    const h = getRandom(this.room_min_size, this.room_max_size) * spriteSize
 
     const x = (this.width - w) / 2
     const y = (this.height - h) / 2
@@ -69,12 +71,9 @@ class Room {
     this.createFurniture()
   }
   createRoom() {
-    const walls = []
-    const doorProbability = 90
-    for (let x = this.x1; x < this.x2; x += 16) {
-      for (let y = this.y1; y < this.y2; y += 16) {
+    for (let x = this.x1; x < this.x2; x += spriteSize) {
+      for (let y = this.y1; y < this.y2; y += spriteSize) {
         this.createFloor(x, y)
-        const createDoor = getRandom(0, 100) > doorProbability
       }
     }
     //Top Wall
@@ -166,11 +165,14 @@ class Room {
     corners,
     spriteSize = 16
   ) {
+    const doorProbability = 85
     for (let ix = from; ix < to; ix += spriteSize) {
       let x, y, spriteFrame
       x = isVertical ? axis : ix
       y = isVertical ? ix : axis
       const randomFrame = Math.random()
+      
+      const createDoor = getRandom(0, 100) > doorProbability
 
       for (const el of frame) {
         if (randomFrame >= el.probInf && randomFrame <= el.probSup) {
@@ -196,7 +198,7 @@ class Room {
   createFurniture() {
     const gap = 50
     const usedPositions = []
-    const possibleElements = ['bed', 'closet', 'table']
+    const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
     let tries = 0
     const maxTries = 1000
     const validateUsedPositions = (posX, posY) => {
