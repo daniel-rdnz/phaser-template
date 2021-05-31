@@ -1,6 +1,8 @@
 // import Phaser from 'phaser'
 const perlin = require('../lib/perlin.js')
 
+const spriteSize = 32
+
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min
 }
@@ -35,8 +37,8 @@ class Map {
 
 
   #makeMap() {
-    const w = getRandom(this.room_min_size, this.room_max_size) * 16
-    const h = getRandom(this.room_min_size, this.room_max_size) * 16
+    const w = getRandom(this.room_min_size, this.room_max_size) * spriteSize
+    const h = getRandom(this.room_min_size, this.room_max_size) * spriteSize
 
     const x = (this.width - w) / 2
     const y = (this.height - h) / 2
@@ -65,43 +67,48 @@ class Room {
     this.createFurniture()
   }
   createRoom() {
-    const walls = []
-    const doorProbability = 90
-    for (let x = this.x1; x < this.x2; x += 16) {
-      for (let y = this.y1; y < this.y2; y += 16) {
+    for (let x = this.x1; x < this.x2; x += spriteSize) {
+      for (let y = this.y1; y < this.y2; y += spriteSize) {
         this.createFloor(x, y)
-        const xLimit = x > this.x1 && x < this.x2 - 16
-        const yLimit = y > this.y1 && y < this.y2 - 16
-        const createDoor = getRandom(0, 100) > doorProbability
-        if (y == this.y1 && xLimit) {
-          // Top
-          this.walls.create(x, y - 24, 'topWall')
-        } else if (x === this.x1 && yLimit && !createDoor) {
-          // Left
-          const wall = this.walls.create(x, y, 'sideWall')
-          wall.angle = 90
-        } else if (x === this.x2 - 16 && yLimit && !createDoor) {
-          // Right
-          const wall = this.walls.create(x, y, 'sideWall')
-          wall.angle = -90
-        } else if (y === this.y2 - 16 && xLimit && !createDoor) {
-          // Down
-          this.walls.create(x, y, 'sideWall')
-        }
+        this.createWalls(x, y)
       }
     }
-    console.table(walls)
-    console.log({ x1: this.x1, x2: this.x2 - 16, y1: this.y1, y2: this.y2 - 16 })
+  }
+
+  createWalls (x, y) {
+    const doorProbability = 85
+    const xLimit = x > this.x1 && x < this.x2 - spriteSize
+    const yLimit = y > this.y1 && y < this.y2 - spriteSize
+    const createDoor = getRandom(0, 100) > doorProbability
+    if (y == this.y1 && xLimit) {
+      // Top
+      this.walls.create(x, y - 44, 'topWall')
+    } else if (x === this.x1 && yLimit && !createDoor) {
+      // Left
+      const wall = this.walls.create(x, y, 'sideWall')
+      wall.angle = 90
+    } else if (x === this.x2 - spriteSize && yLimit && !createDoor) {
+      // Right
+      const wall = this.walls.create(x, y, 'sideWall')
+      wall.angle = -90
+    } else if (y === this.y2 - spriteSize && xLimit && !createDoor) {
+      // Down
+      this.walls.create(x, y, 'sideWall')
+    }
   }
 
   createFloor(x, y) {
-    this.floors.create(x, y, 'floor')
+    const xLimit = x > this.x1 && x < this.x2 - spriteSize
+    const yLimit = y > this.y1 && y < this.y2 - spriteSize
+    if (xLimit && yLimit) {
+      this.floors.create(x, y, 'floor')
+    }
   }
 
   createFurniture () {
     const gap = 50
     const usedPositions = []
-    const possibleElements = ['bed', 'closet', 'table']
+    const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
     let tries = 0
     const maxTries = 1000
     const validateUsedPositions = (posX, posY) => {
