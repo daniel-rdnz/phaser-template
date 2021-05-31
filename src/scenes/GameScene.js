@@ -11,7 +11,7 @@ class GameScene extends Scene {
     //SPOTLIGHT INSTANCE
     this.spotlight = new SpotLight(this)
     
-    this.map = new Map(this, 20, 10, this.game.config.width, this.game.config.height)
+    this.map = new Map(this, 35, 20, this.game.config.width, this.game.config.height)
     this.map.setMask(this.spotlight.getMask())
     this.map.create()
     const roomCenter = this.map.getCurrentRoom().center_coords

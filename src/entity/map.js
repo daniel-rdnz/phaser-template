@@ -1,7 +1,7 @@
 // import Phaser from 'phaser'
 const perlin = require('../lib/perlin.js')
 
-const spriteSize = 32
+const spriteSize = 16
 
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min
