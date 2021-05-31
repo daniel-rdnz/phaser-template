@@ -39,6 +39,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   preUpdate(time, delta) {
     this.body.setVelocity(0)
+    this.setDepth(this.y)
     if (this.A.isDown || this.LEFT.isDown) {
       this.moveLeft()
     }

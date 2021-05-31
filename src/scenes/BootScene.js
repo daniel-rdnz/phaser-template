@@ -15,6 +15,7 @@ class BootScene extends Scene {
     this.load.image("table", "assets/sprite/table.png");
     this.load.image("topWall", "assets/sprite/topWall.png");
     this.load.image("sideWall", "assets/sprite/sideWall.png");
+    this.load.atlas('atlas', 'assets/tilesets/atlas.png', 'assets/atlas/set.json');
   }
 
   create() {

@@ -5,10 +5,11 @@ const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min
 }
 class Map {
-  currentRoom;
+  currentRoom
+  mask
   constructor(scene, maxSize = 10, minSize = 5, width, height) {
     this.scene = scene
-    this.currentRoom;
+    this.currentRoom
     this.room_max_size = maxSize
     this.room_min_size = minSize
     this.max_rooms = 1
@@ -19,6 +20,9 @@ class Map {
     this.height = height
     this.width = width
     this.center_coords = { x: 0, y: 0 }
+  }
+  setMask(mask) {
+    this.mask = mask
   }
 
   getCenter() {
@@ -32,7 +36,6 @@ class Map {
   getCurrentRoom() {
     return this.room
   }
-
 
   #makeMap() {
     const w = getRandom(this.room_min_size, this.room_max_size) * 16
@@ -70,35 +73,123 @@ class Room {
     for (let x = this.x1; x < this.x2; x += 16) {
       for (let y = this.y1; y < this.y2; y += 16) {
         this.createFloor(x, y)
-        const xLimit = x > this.x1 && x < this.x2 - 16
-        const yLimit = y > this.y1 && y < this.y2 - 16
         const createDoor = getRandom(0, 100) > doorProbability
-        if (y == this.y1 && xLimit) {
-          // Top
-          this.walls.create(x, y - 24, 'topWall')
-        } else if (x === this.x1 && yLimit && !createDoor) {
-          // Left
-          const wall = this.walls.create(x, y, 'sideWall')
-          wall.angle = 90
-        } else if (x === this.x2 - 16 && yLimit && !createDoor) {
-          // Right
-          const wall = this.walls.create(x, y, 'sideWall')
-          wall.angle = -90
-        } else if (y === this.y2 - 16 && xLimit && !createDoor) {
-          // Down
-          this.walls.create(x, y, 'sideWall')
-        }
       }
     }
-    console.table(walls)
-    console.log({ x1: this.x1, x2: this.x2 - 16, y1: this.y1, y2: this.y2 - 16 })
+    //Top Wall
+    this.#createWall(
+      this.y1,
+      this.x1 + 16,
+      this.x2 - 16,
+      [
+        { frame: 'topWall', probInf: 0, probSup: 0.85 },
+        { frame: 'topWall1', probInf: 0.85, probSup: 0.92 },
+        { frame: 'topWall2', probInf: 0.92, probSup: 0.96 },
+        { frame: 'topWall3', probInf: 0.96, probSup: 1 }
+      ],
+      false,
+      { x: 0, y: -24 },
+      undefined,
+      {
+        x: 0,
+        y: 16
+      }
+    )
+
+    //Left Wall
+    this.#createWall(
+      this.x1,
+      this.y1 - 24,
+      this.y2,
+      [
+        { frame: 'leftWall', probInf: 0, probSup: 0.95 },
+        { frame: 'leftWall1', probInf: 0.9, probSup: 0.95 },
+        { frame: 'leftWall2', probInf: 0.95, probSup: 1 }
+      ],
+      true
+    )
+
+    //Right Wall
+    this.#createWall(
+      this.x2 - 16,
+      this.y1 - 24,
+      this.y2,
+      [
+        { frame: 'rightWall', probInf: 0, probSup: 0.95 },
+        { frame: 'rightWall1', probInf: 0.9, probSup: 0.95 },
+        { frame: 'rightWall2', probInf: 0.95, probSup: 1 }
+      ],
+      true
+    )
+
+    //Down Wall
+    this.#createWall(
+      this.y2 - 8,
+      this.x1,
+      this.x2,
+      [
+        { frame: 'topWall', probInf: 0, probSup: 0.85 },
+        { frame: 'topWall1', probInf: 0.85, probSup: 0.92 },
+        { frame: 'topWall2', probInf: 0.92, probSup: 0.96 },
+        { frame: 'topWall3', probInf: 0.96, probSup: 1 }
+      ],
+      false,
+      { x: 0, y: 16 },
+      undefined,
+      {
+        x: 0,
+        y: 32
+      },
+      true,
+      ['downWallLeft', 'downWallRight']
+    )
   }
 
   createFloor(x, y) {
-    this.floors.create(x, y, 'floor')
+    this.floors.create(x, y + 8, 'atlas').setFrame('floor')
   }
 
-  createFurniture () {
+  #createWall(
+    axis,
+    from,
+    to,
+    frame,
+    isVertical,
+    offset = { x: 0, y: 0 },
+    bodySize = { x: 16, y: 16 },
+    bodyOffset = { x: 0, y: 0 },
+    hasCorners = false,
+    corners,
+    spriteSize = 16
+  ) {
+    for (let ix = from; ix < to; ix += spriteSize) {
+      let x, y, spriteFrame
+      x = isVertical ? axis : ix
+      y = isVertical ? ix : axis
+      const randomFrame = Math.random()
+
+      for (const el of frame) {
+        if (randomFrame >= el.probInf && randomFrame <= el.probSup) {
+          spriteFrame = el.frame
+        }
+      }
+
+      if (hasCorners && ix === from) {
+        spriteFrame = corners[0]
+      }
+
+      if (hasCorners && ix === to - 16) {
+        spriteFrame = corners[1]
+      }
+
+      const wall = this.walls.create(x + offset.x, y + offset.y, 'atlas').setFrame(spriteFrame)
+      wall.body.setSize(bodySize.x, bodySize.y)
+      wall.body.setOffset(bodyOffset.x, bodyOffset.y)
+      wall.setDepth(y + bodyOffset.y)
+    }
+  }
+
+  createFurniture() {
     const gap = 50
     const usedPositions = []
     const possibleElements = ['bed', 'closet', 'table']
@@ -108,41 +199,44 @@ class Room {
       if (usedPositions.length === 0) {
         return true
       }
-      for (const {possibleX, possibleY} of usedPositions) {
-        if((posX > possibleX + gap || posX < possibleX - gap) && (posY > possibleY + gap || posY < possibleY - gap)) {
+      for (const { possibleX, possibleY } of usedPositions) {
+        if ((posX > possibleX + gap || posX < possibleX - gap) && (posY > possibleY + gap || posY < possibleY - gap)) {
           return true
         }
       }
       return false
     }
-    
+
     const findPosition = () => {
       tries += 1
-      const {x, y} = this.center_coords
-      perlin.noise.seed(Math.random());
+      const { x, y } = this.center_coords
+      perlin.noise.seed(Math.random())
       const noise = Math.abs(perlin.noise.simplex2(x, y))
-      const possibleX = this.x1 + (noise * getRandom(20, this.width))  
-      const possibleY = this.y1 + (noise * getRandom(20, this.height))
-      if (possibleX > this.x1 + gap && possibleX < this.x2 - gap
-        && possibleY > this.y1 + gap && possibleY < this.y2 - gap
-        && validateUsedPositions(possibleX, possibleY)) {
-        const possiblePosition = {possibleX, possibleY}
+      const possibleX = this.x1 + noise * getRandom(20, this.width)
+      const possibleY = this.y1 + noise * getRandom(20, this.height)
+      if (
+        possibleX > this.x1 + gap &&
+        possibleX < this.x2 - gap &&
+        possibleY > this.y1 + gap &&
+        possibleY < this.y2 - gap &&
+        validateUsedPositions(possibleX, possibleY)
+      ) {
+        const possiblePosition = { possibleX, possibleY }
         usedPositions.push(possiblePosition)
-        return {possibleX, possibleY, set: true}
-      } else if (tries <= maxTries){
+        return { possibleX, possibleY, set: true }
+      } else if (tries <= maxTries) {
         return findPosition()
       } else {
-        return {possibleX, possibleY, set: false}
+        return { possibleX, possibleY, set: false }
       }
     }
     for (const element of possibleElements) {
       const { possibleX, possibleY, set } = findPosition()
       if (set) {
-        this.furniture.create(possibleX , possibleY, element)
+        this.furniture.create(possibleX, possibleY, element)
       }
     }
   }
-  
 }
 
 export default Map
