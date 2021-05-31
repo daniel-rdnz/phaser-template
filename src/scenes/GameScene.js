@@ -24,7 +24,7 @@ class GameScene extends Scene {
       sprite: 'player'
     })
     
-    this.player.setMask(this.spotlight.getMask())
+    //this.player.setMask(this.spotlight.getMask())
     
     this.player.setColliders(this.map.getCurrentRoom().walls)
     this.player.setColliders(this.map.getCurrentRoom().furniture)

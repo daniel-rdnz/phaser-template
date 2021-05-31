@@ -150,6 +150,7 @@ class Room {
     const floor = this.floors.create(x, y + 16, 'atlas')
     floor.setFrame('floor')
     floor.setMask(this.mask)
+    floor.setDepth(-1)
   }
 
   #createWall(

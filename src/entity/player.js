@@ -5,9 +5,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     super(config.scene, config.x, config.y, config.sprite)
 
     this.setOrigin(0.5, 0.5)
-    this.direction = -1
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
+
+    this.body.setSize(32, 32)
 
     this.A = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
     this.W = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
