@@ -15,7 +15,7 @@ class SpotLight {
       targets: this.light,
       scaleX: 1.50,
       scaleY: 1.50,
-      duration: 100,
+      duration: 200,
       ease: 'Sine.easeInOut',
       loop: -1,
       yoyo: true
