@@ -3,7 +3,11 @@ import Phaser from 'phaser'
 class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.sprite)
-
+    this.bloodQuantity = 20
+    this.maxSanity = 10
+    this.sanity = 1
+    this.maxHealth = 100 * this.sanity
+    this.health = this.maxHealth - 50
     this.setOrigin(0.5, 0.5)
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
@@ -39,6 +43,28 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   setColliders(group){
     this.scene.physics.add.collider(this, group)
   }
+
+  removeBlood (qty) {
+    const newHealth = this.health - qty
+    if (newHealth <= 0) {
+      // Game over
+    }
+    this.health = newHealth
+  }
+
+  addBlood () {
+    const newHealth = this.health + (this.bloodQuantity * this.sanity)
+    this.health = newHealth > this.maxHealth ? this.maxHealth : newHealth
+  }
+
+  addSanity () {
+    if ( this.sanity >= this.maxSanity) {
+      // Win
+    }
+    this.sanity += 1
+    this.health = this.health * this.sanity
+  }
+
   preUpdate(time, delta) {
     this.body.setVelocity(0)
     this.setDepth(this.y)

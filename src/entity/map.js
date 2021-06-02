@@ -1,4 +1,4 @@
-// import Phaser from 'phaser'
+import Phaser from 'phaser'
 const perlin = require('../lib/perlin.js')
 
 const spriteSize = 16
@@ -52,6 +52,7 @@ class Map {
 
 class Room {
   constructor(scene, x, y, w, h, mask) {
+    this.scene = scene
     this.mask = mask
     this.x1 = x
     this.y1 = y
@@ -66,9 +67,12 @@ class Room {
     this.walls = scene.physics.add.staticGroup()
     this.floors = scene.add.group()
     this.furniture = scene.physics.add.staticGroup()
-
+    this.items = scene.physics.add.staticGroup()
+    const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
+    const possibleItems = ['blood', 'medicine']
     this.createRoom()
-    this.createFurniture()
+    this.createObjects(possibleElements)
+    this.createObjects(possibleItems, 'items')
   }
   createRoom() {
     for (let x = this.x1; x < this.x2; x += spriteSize) {
@@ -195,10 +199,9 @@ class Room {
     }
   }
 
-  createFurniture() {
+  createObjects(elements, type = 'furniture') {
     const gap = 50
     const usedPositions = []
-    const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
     let tries = 0
     const maxTries = 1000
     const validateUsedPositions = (posX, posY) => {
@@ -236,11 +239,29 @@ class Room {
         return { possibleX, possibleY, set: false }
       }
     }
-    for (const element of possibleElements) {
+
+    for (const element of elements) {
       const { possibleX, possibleY, set } = findPosition()
       if (set) {
-        this.furniture.create(possibleX, possibleY, element).setMask(this.mask)
+        this[type].create(possibleX, possibleY, element).setMask(this.mask)
       }
+    }
+    if (type === 'items') {
+      Phaser.Actions.Call(this.items.getChildren(), (item) => {
+        item.setInteractive()
+        item.on('pointerdown', (pointer) => {
+          console.log('touch ', item)
+          if (item.texture.key === 'blood') {
+            this.scene.player.addBlood()
+            console.log('new health '+this.scene.player.health)
+          }
+          if (item.texture.key === 'medicine') {
+            this.scene.player.addSanity()
+            console.log('new sanity '+this.scene.player.sanity)
+          }
+          this.items.destroy(item)
+        })
+      })
     }
   }
 }
