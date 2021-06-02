@@ -18,7 +18,7 @@ class BootScene extends Scene {
     this.load.atlas('atlas', 'assets/tilesets/atlas.png', 'assets/atlas/set.json')
     this.load.image("smallShirt", "assets/sprite/small_shirt.png")
 
-    this.load.audio('darkNoise', ["assets/sounds/dark_noise.mp3"])
+    this.load.audio('darkNoise', ["assets/sounds/horror-loop.mp3"])
   }
 
   create() {

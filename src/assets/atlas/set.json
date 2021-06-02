@@ -110,11 +110,35 @@
     },
     {
       "filename": "floor",
-      "frame": { "x": 128, "y": 0, "w": 16, "h": 64 },
+      "frame": { "x": 128, "y": 0, "w": 16, "h": 16 },
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": { "x": 128, "y": 0, "w": 16, "h": 64 },
-      "sourceSize": { "w": 16, "h": 64 }
+      "spriteSourceSize": { "x": 128, "y": 0, "w": 16, "h": 16 },
+      "sourceSize": { "w": 16, "h": 16 }
+    },
+    {
+      "filename": "front-door",
+      "frame": { "x": 144, "y": 0, "w": 48, "h": 64 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 144, "y": 0, "w": 48, "h": 64 },
+      "sourceSize": { "w": 48, "h": 64 }
+    },
+    {
+      "filename": "left-door",
+      "frame": { "x": 192, "y": 0, "w": 16, "h": 48 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 160, "y": 0, "w": 16, "h": 48 },
+      "sourceSize": { "w": 16, "h": 48  }
+    },
+    {
+      "filename": "right-door",
+      "frame": { "x": 208, "y": 0, "w": 16, "h": 48 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 176, "y": 0, "w": 16, "h": 48 },
+      "sourceSize": { "w": 16, "h": 48  }
     }
   ]
 }

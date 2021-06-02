@@ -39,6 +39,11 @@ class Map {
     return this.room
   }
 
+  getDoors(){
+    return this.room.doors
+  }
+
+
   #makeMap() {
     const w = getRandom(this.room_min_size, this.room_max_size) * spriteSize
     const h = getRandom(this.room_min_size, this.room_max_size) * spriteSize
@@ -62,6 +67,8 @@ class Room {
     var center_x = (this.x1 + this.x2) / 2
     var center_y = (this.y1 + this.y2) / 2
     this.center_coords = { x: center_x, y: center_y }
+    this.numberDoors = Math.random() < 0.2 ? 2 : 1
+    this.doors = []
 
     this.walls = scene.physics.add.staticGroup()
     this.floors = scene.add.group()
@@ -143,6 +150,29 @@ class Room {
       true,
       ['downWallLeft', 'downWallRight']
     )
+
+    this.createDoors()
+  }
+
+  getDoors(){
+    return this.doors
+  }
+
+  createDoors() {
+    //ENTRY
+    const left = this.walls.create(this.x1, this.center_coords.y, 'atlas').setFrame('left-door')
+    left.setDepth(left.y + 32)
+    left.body.setSize(16, 16)
+    left.body.setOffset(0, 32)
+    left.alpha = 0.5
+    this.doors.push(left)
+
+    //ENTRY
+    const door = this.walls.create(this.center_coords.x, this.y2 + 8, 'atlas').setFrame('front-door')
+    door.setDepth(this.y2 + 32)
+    door.body.setSize(32, 16)
+    door.body.setOffset(0, 32)
+    //door.setMask(this.mask)
   }
 
   createFloor(x, y) {
@@ -165,14 +195,11 @@ class Room {
     corners,
     spriteSize = 16
   ) {
-    const doorProbability = 85
     for (let ix = from; ix < to; ix += spriteSize) {
       let x, y, spriteFrame
       x = isVertical ? axis : ix
       y = isVertical ? ix : axis
       const randomFrame = Math.random()
-      
-      const createDoor = getRandom(0, 100) > doorProbability
 
       for (const el of frame) {
         if (randomFrame >= el.probInf && randomFrame <= el.probSup) {
