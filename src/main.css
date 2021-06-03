@@ -28,6 +28,7 @@ body {
   text-rendering: optimizeSpeed;
   line-height: 1.5;
   overflow: hidden;
+  font-family: SH_PINSCHER;
 }
 
 /* Remove list styles on ul, ol elements with a class attribute */
@@ -59,6 +60,65 @@ textarea,
 select {
   font: inherit;
 }
+
+.hud-container {
+  position: fixed;
+  top: 20;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.hud {
+  border: solid 4px white;
+  width: 300px;
+  height: 45px;
+  padding: 5;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+.hud .player-image {
+  border: solid 2px white;
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  background-image: url('./assets/sprite/character.png');
+  background-size: contain;
+}
+.hud .stats {
+  line-height: 1.5;
+  font-size: 14px;
+  width: 100%;
+}
+.hud .stats .health, .sanity {
+  display: flex;
+  align-items: center;
+}
+
+.hud .stats #health-bar, #sanity-bar {
+  border: solid 2px white;
+  height: 10px;
+  width: 100%;
+  margin-left: 5px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+#health, #sanity {
+  height: 8px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+#health {
+  background-color: rgb(153, 0, 0);
+}
+
+#sanity {
+  background-color: rgb(86, 252, 86);
+}
+
 
 /* Remove all animations and transitions for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {

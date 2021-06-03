@@ -55,7 +55,7 @@ class Room {
     this.scene = scene
     this.mask = mask
     this.x1 = x
-    this.y1 = y
+    this.y1 = y + 50
     this.x2 = x + w
     this.y2 = y + h
     this.width = w
