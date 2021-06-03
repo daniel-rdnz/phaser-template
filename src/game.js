@@ -1,5 +1,6 @@
 import "./main.css";
 import Phaser, {Game} from 'phaser';
+import MenuScene from './scenes/MenuScene';
 import BootScene from './scenes/BootScene';
 import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
@@ -24,6 +25,7 @@ const config = {
   },
   scene: [
     BootScene,
+    MenuScene,
     GameScene,
     TitleScene,
     GameOverScene

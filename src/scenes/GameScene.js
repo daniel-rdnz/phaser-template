@@ -28,11 +28,17 @@ class GameScene extends Scene {
     
     this.player.setColliders(this.map.getCurrentRoom().walls)
     this.player.setColliders(this.map.getCurrentRoom().furniture)
+    
   }
 
   update(time, delta) {
     this.spotlight.getLight().x = this.player.x
     this.spotlight.getLight().y = this.player.y
+  }
+
+  create () {
+    const hud = document.getElementById('hud')
+    hud.style.display = 'flex'
   }
 }
 export default GameScene
