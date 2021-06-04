@@ -5,6 +5,7 @@ import BootScene from './scenes/BootScene';
 import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
 import GameOverScene from './scenes/GameOver';
+import FinalScene from './scenes/FinalScene';
 
 const canvas = document.getElementById('game-canvas');
 
@@ -28,7 +29,8 @@ const config = {
     MenuScene,
     GameScene,
     TitleScene,
-    GameOverScene
+    GameOverScene,
+    FinalScene
   ]
 };
 

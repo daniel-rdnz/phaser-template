@@ -39,6 +39,8 @@ class GameScene extends Scene {
   create () {
     const hud = document.getElementById('hud')
     hud.style.display = 'flex'
+    const initialText = document.getElementById('initial-text')
+    initialText.style.display = 'none'
   }
 }
 export default GameScene

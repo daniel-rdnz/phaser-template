@@ -9,7 +9,7 @@ class MenuScene extends Scene {
     this.add.image(0, 0, 'house').setOrigin(0).setDepth(0);
 
     const playButton = this.add.image((this.game.renderer.width / 2) + 200, this.game.renderer.height / 2, 'playButton').setDepth(1);
-    playButton.setInteractive();
+    playButton.setInteractive({ useHandCursor: true  });
 
     playButton.on("pointerover", () => {
       playButton.tint = 0xCCCCCC
@@ -21,6 +21,9 @@ class MenuScene extends Scene {
     playButton.on("pointerup", () => {
       this.scene.start('scene-game');
     })
+
+    const initialText = document.getElementById('initial-text')
+    initialText.style.display = 'block'
   }
 }
 

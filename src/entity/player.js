@@ -55,7 +55,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   removeBlood (qty) {
     const newHealth = this.health - qty
     if (newHealth <= 0) {
-      // Game over
+       this.scene.start('scene-gameover');
     }
     this.health = newHealth
     this.updateHud('health')
@@ -69,7 +69,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
   addSanity () {
     if ( this.sanity >= this.maxSanity) {
-      // Win
+      this.scene.start('scene-final');
     }
     this.sanity += 1
     this.health = this.health * this.sanity

@@ -21,7 +21,8 @@ class BootScene extends Scene {
     this.load.image("medicine", "assets/sprite/medicine.png")
     this.load.image("house", "assets/sprite/house.jpg")
     this.load.image("playButton", "assets/sprite/play_button.png")
-
+    
+    this.load.audio("pickupItem", ["assets/sounds/pickupItem.mp3"])
     this.load.audio('darkNoise', ["assets/sounds/dark_noise.mp3"])
 
     const loadingBar = this.add.graphics({

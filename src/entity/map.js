@@ -68,6 +68,7 @@ class Room {
     this.floors = scene.add.group()
     this.furniture = scene.physics.add.staticGroup()
     this.items = scene.physics.add.staticGroup()
+    this.effectSound = scene.sound.add('pickupItem')
     const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
     const possibleItems = ['blood', 'medicine']
     this.createRoom()
@@ -250,6 +251,7 @@ class Room {
       Phaser.Actions.Call(this.items.getChildren(), (item) => {
         item.setInteractive()
         item.on('pointerdown', (pointer) => {
+          this.effectSound.play()
           console.log('touch ', item)
           if (item.texture.key === 'blood') {
             this.scene.player.addBlood()
