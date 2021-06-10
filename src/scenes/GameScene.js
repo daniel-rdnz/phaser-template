@@ -36,8 +36,8 @@ class GameScene extends Phaser.Scene {
 
     for (let door of this.map.getDoors()) {
       const dist = Phaser.Math.Distance.BetweenPoints(this.player, door)
-      if (dist < 40) {
-        door.alpha = 1
+      if (dist < 80) {
+        door.alpha = 40 / dist
       } else {
         door.alpha = 0
       }
