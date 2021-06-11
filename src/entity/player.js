@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 
+const capitalizeText = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+
 class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.sprite)
@@ -44,25 +46,34 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.add.collider(this, group)
   }
 
+  updateHud (type) {
+    const bar = document.getElementById(type)
+    const max = this[`max${capitalizeText(type)}`]
+    bar.style.width = `${this[type] * 100 / max}%`
+  }
+
   removeBlood (qty) {
     const newHealth = this.health - qty
     if (newHealth <= 0) {
-      // Game over
+       this.scene.start('scene-gameover');
     }
     this.health = newHealth
+    this.updateHud('health')
   }
 
   addBlood () {
     const newHealth = this.health + (this.bloodQuantity * this.sanity)
     this.health = newHealth > this.maxHealth ? this.maxHealth : newHealth
+    this.updateHud('health')
   }
 
   addSanity () {
     if ( this.sanity >= this.maxSanity) {
-      // Win
+      this.scene.start('scene-final');
     }
     this.sanity += 1
     this.health = this.health * this.sanity
+    this.updateHud('sanity')
   }
 
   preUpdate(time, delta) {
@@ -83,6 +94,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.W.isDown || this.UP.isDown) {
       this.moveUp()
     }
+    this.updateHud('health')
+    this.updateHud('sanity')
   }
 }
 

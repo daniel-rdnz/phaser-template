@@ -39,10 +39,9 @@ class Map {
     return this.room
   }
 
-  getDoors(){
+  getDoors() {
     return this.room.doors
   }
-
 
   #makeMap() {
     const w = getRandom(this.room_min_size, this.room_max_size) * spriteSize
@@ -60,21 +59,27 @@ class Room {
     this.scene = scene
     this.mask = mask
     this.x1 = x
-    this.y1 = y
+    this.y1 = y + 50
     this.x2 = x + w
     this.y2 = y + h
     this.width = w
     this.height = h
     var center_x = (this.x1 + this.x2) / 2
-    var center_y = (this.y1 + this.y2) / 2
-    this.center_coords = { x: center_x, y: center_y }
+    this.center_coords = { x: center_x, y: this.y2 - 8 }
     this.numberDoors = Math.random() < 0.2 ? 2 : 1
+    this.wallDoors = []
     this.doors = []
+
+    while (this.wallDoors.length < this.numberDoors) {
+      var r = Math.floor(Math.random() * 3)
+      if (this.wallDoors.indexOf(r) === -1) this.wallDoors.push(r)
+    }
 
     this.walls = scene.physics.add.staticGroup()
     this.floors = scene.add.group()
     this.furniture = scene.physics.add.staticGroup()
     this.items = scene.physics.add.staticGroup()
+    this.effectSound = scene.sound.add('pickupItem')
     const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
     const possibleItems = ['blood', 'medicine']
     this.createRoom()
@@ -158,18 +163,49 @@ class Room {
     this.createDoors()
   }
 
-  getDoors(){
+  getDoors() {
     return this.doors
   }
 
   createDoors() {
+    for (let ix of this.wallDoors) {
+      let x,
+        y,
+        frame,
+        offset = {},
+        size = {}
+      switch (ix) {
+        case 0:
+          x = this.x1
+          y = getRandom(this.y1, this.y2)
+          frame = 'left-door'
+          size = { x: 16, y: 16 }
+          offset = { x: 0, y: 32 }
+          break
+        case 1:
+          x = getRandom(this.x1 + 32, this.x2 - 32)
+          y = this.y1 - 24
+          frame = 'front-door'
+          size = { x: 32, y: 16 }
+          offset = { x: 0, y: 32 }
+          break
+          break
+        case 2:
+          x = this.x2 - 16
+          y = getRandom(this.y1, this.y2)
+          frame = 'right-door'
+          size = { x: 16, y: 16 }
+          offset = { x: 0, y: 32 }
+          break
+      }
+      const door = this.walls.create(x, y, 'atlas').setFrame(frame)
+      door.setDepth(door.y + 40)
+      door.body.setSize(size.x, size.y)
+      door.body.setOffset(offset.x, offset.y)
+      door.alpha = 0.5
+      this.doors.push(door)
+    }
     //ENTRY
-    const left = this.walls.create(this.x1, this.center_coords.y, 'atlas').setFrame('left-door')
-    left.setDepth(left.y + 32)
-    left.body.setSize(16, 16)
-    left.body.setOffset(0, 32)
-    left.alpha = 0.5
-    this.doors.push(left)
 
     //ENTRY
     const door = this.walls.create(this.center_coords.x, this.y2 + 8, 'atlas').setFrame('front-door')
@@ -277,14 +313,15 @@ class Room {
       Phaser.Actions.Call(this.items.getChildren(), (item) => {
         item.setInteractive()
         item.on('pointerdown', (pointer) => {
+          this.effectSound.play()
           console.log('touch ', item)
           if (item.texture.key === 'blood') {
             this.scene.player.addBlood()
-            console.log('new health '+this.scene.player.health)
+            console.log('new health ' + this.scene.player.health)
           }
           if (item.texture.key === 'medicine') {
             this.scene.player.addSanity()
-            console.log('new sanity '+this.scene.player.sanity)
+            console.log('new sanity ' + this.scene.player.sanity)
           }
           this.items.destroy(item)
         })

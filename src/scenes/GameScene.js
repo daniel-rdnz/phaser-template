@@ -28,6 +28,7 @@ class GameScene extends Phaser.Scene {
 
     this.player.setColliders(this.map.getCurrentRoom().walls)
     this.player.setColliders(this.map.getCurrentRoom().furniture)
+    
   }
 
   update(time, delta) {
@@ -42,6 +43,13 @@ class GameScene extends Phaser.Scene {
         door.alpha = 0
       }
     }
+  }
+
+  create () {
+    const hud = document.getElementById('hud')
+    hud.style.display = 'flex'
+    const initialText = document.getElementById('initial-text')
+    initialText.style.display = 'none'
   }
 }
 export default GameScene

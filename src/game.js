@@ -1,9 +1,11 @@
 import "./main.css";
 import Phaser, {Game} from 'phaser';
+import MenuScene from './scenes/MenuScene';
 import BootScene from './scenes/BootScene';
 import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
 import GameOverScene from './scenes/GameOver';
+import FinalScene from './scenes/FinalScene';
 
 const canvas = document.getElementById('game-canvas');
 
@@ -19,14 +21,16 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
-      debug: false
+      debug: true
     }
   },
   scene: [
     BootScene,
+    MenuScene,
     GameScene,
     TitleScene,
-    GameOverScene
+    GameOverScene,
+    FinalScene
   ]
 };
 
