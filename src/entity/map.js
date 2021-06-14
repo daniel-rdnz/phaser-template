@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { history } from '../constants'
 const perlin = require('../lib/perlin.js')
 
 const spriteSize = 16
@@ -56,14 +57,15 @@ class Map {
 
 class Room {
   constructor(scene, x, y, w, h, mask) {
+    this.margin = 60
     this.scene = scene
     this.mask = mask
     this.x1 = x
-    this.y1 = y + 50
+    this.y1 = y + this.margin
     this.x2 = x + w
-    this.y2 = y + h
+    this.y2 = y + h - this.margin
     this.width = w
-    this.height = h
+    this.height = h - this.margin
     var center_x = (this.x1 + this.x2) / 2
     this.center_coords = { x: center_x, y: this.y2 - 8 }
     this.numberDoors = Math.random() < 0.2 ? 2 : 1
@@ -80,8 +82,29 @@ class Room {
     this.furniture = scene.physics.add.staticGroup()
     this.items = scene.physics.add.staticGroup()
     this.effectSound = scene.sound.add('pickupItem')
-    const possibleElements = ['bed', 'closet', 'table', 'smallShirt']
-    const possibleItems = ['blood', 'medicine']
+    this.usedPositions = []
+    const possibleElements = [
+      {
+        name: 'bed', width: 32, height: 64, solid: true
+      },
+      {
+        name: 'closet', width: 36, height: 69, solid: true
+      },
+      {
+        name: 'table', width: 25, height: 14, solid: true
+      },
+      {
+        name: 'smallShirt', width: 32, height: 32, solid: false
+      }
+    ]
+    const possibleItems = [
+      {
+        name: 'blood', width: 16, height: 16, solid: false
+      },
+      {
+        name: 'medicine', width: 16, height: 16, solid: false
+      }
+    ]
     this.createRoom()
     this.createObjects(possibleElements)
     this.createObjects(possibleItems, 'items')
@@ -263,50 +286,52 @@ class Room {
   }
 
   createObjects(elements, type = 'furniture') {
-    const gap = 50
-    const usedPositions = []
+    const gap = 35
     let tries = 0
-    const maxTries = 1000
-    const validateUsedPositions = (posX, posY) => {
-      if (usedPositions.length === 0) {
+    const maxTries = 2000
+    const validateUsedPositions = (posX, posY, elementWidth, elementHeight) => {
+      if (this.usedPositions.length === 0) {
         return true
       }
-      for (const { possibleX, possibleY } of usedPositions) {
-        if ((posX > possibleX + gap || posX < possibleX - gap) && (posY > possibleY + gap || posY < possibleY - gap)) {
+      for (const { possibleX, possibleY, usedWidth,  usedHeight} of this.usedPositions) {
+        if ((posX + elementWidth > possibleX + usedWidth + gap || posX + elementWidth < possibleX + usedWidth + gap) &&
+        (posY + elementHeight > possibleY + usedHeight + gap || posY + elementHeight < possibleY + usedHeight + gap)) {
           return true
         }
       }
       return false
     }
 
-    const findPosition = () => {
+    const findPosition = (element) => {
       tries += 1
       const { x, y } = this.center_coords
       perlin.noise.seed(Math.random())
       const noise = Math.abs(perlin.noise.simplex2(x, y))
-      const possibleX = this.x1 + noise * getRandom(20, this.width)
-      const possibleY = this.y1 + noise * getRandom(20, this.height)
+      const randomX = getRandom(10, this.width)
+      const randomY = getRandom(10, this.height)
+      const possibleX = this.x1 + getRandom(noise * randomX, this.width)
+      const possibleY = this.y1 + getRandom(noise * randomY, this.height)
       if (
-        possibleX > this.x1 + gap &&
-        possibleX < this.x2 - gap &&
-        possibleY > this.y1 + gap &&
-        possibleY < this.y2 - gap &&
-        validateUsedPositions(possibleX, possibleY)
+        possibleX > this.x1 + element.width + gap &&
+        possibleX < this.x2 - element.width - gap &&
+        possibleY > this.y1 + element.height + gap &&
+        possibleY < this.y2 - element.height - gap &&
+        validateUsedPositions(possibleX, possibleY, element.width, element.height)
       ) {
-        const possiblePosition = { possibleX, possibleY }
-        usedPositions.push(possiblePosition)
+        const possiblePosition = { possibleX, possibleY, usedWidth:  element.width, usedHeight: element.height }
+        this.usedPositions.push(possiblePosition)
         return { possibleX, possibleY, set: true }
       } else if (tries <= maxTries) {
-        return findPosition()
+        return findPosition(element)
       } else {
         return { possibleX, possibleY, set: false }
       }
     }
 
     for (const element of elements) {
-      const { possibleX, possibleY, set } = findPosition()
+      const { possibleX, possibleY, set } = findPosition(element)
       if (set) {
-        this[type].create(possibleX, possibleY, element).setMask(this.mask)
+        this[type].create(possibleX, possibleY, element.name).setMask(this.mask)
       }
     }
     if (type === 'items') {
@@ -317,13 +342,23 @@ class Room {
           console.log('touch ', item)
           if (item.texture.key === 'blood') {
             this.scene.player.addBlood()
+            item.destroy(item)
             console.log('new health ' + this.scene.player.health)
           }
           if (item.texture.key === 'medicine') {
             this.scene.player.addSanity()
+            item.destroy(item)
+            const hudText = document.getElementById('hud-text')
+            const playerSanity = this.scene.player.getSanity()
+            console.log('playerSanity', playerSanity)
+            hudText.innerHTML = `<p>${history[playerSanity]}</p>`
+            hudText.style.display = 'block'
+            setTimeout(() => {
+              hudText.style.display = 'none'
+            }, 10000)
             console.log('new sanity ' + this.scene.player.sanity)
           }
-          this.items.destroy(item)
+          
         })
       })
     }

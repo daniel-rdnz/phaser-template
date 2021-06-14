@@ -76,6 +76,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.updateHud('sanity')
   }
 
+  getSanity () {
+    return this.sanity
+  }
+
   preUpdate(time, delta) {
     this.body.setVelocity(0)
     this.setDepth(this.y)
