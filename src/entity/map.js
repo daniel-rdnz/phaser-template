@@ -286,26 +286,30 @@ class Room {
   }
 
   createObjects(elements, type = 'furniture') {
-    const gap = 35
+    const gap = 20
     let tries = 0
-    const maxTries = 2000
+    const maxTries = 1000
     const validateUsedPositions = (posX, posY, elementWidth, elementHeight) => {
+      let validPositions = 0
+      let notValidPositions = 0
       if (this.usedPositions.length === 0) {
         return true
       }
       for (const { possibleX, possibleY, usedWidth,  usedHeight} of this.usedPositions) {
-        if ((posX + elementWidth > possibleX + usedWidth + gap || posX + elementWidth < possibleX + usedWidth + gap) &&
-        (posY + elementHeight > possibleY + usedHeight + gap || posY + elementHeight < possibleY + usedHeight + gap)) {
-          return true
+        if ((posX > possibleX + usedWidth + gap || posX + elementWidth + gap < possibleX) &&
+        (posY > possibleY + usedHeight + gap || posY + elementHeight + gap < possibleY)) {
+          validPositions += 1
+        } else {
+          notValidPositions += 1
         }
       }
-      return false
+      return notValidPositions <= 1 && validPositions === 1
     }
 
     const findPosition = (element) => {
       tries += 1
       const { x, y } = this.center_coords
-      perlin.noise.seed(Math.random())
+      perlin.noise.seed(getRandom(10, this.width))
       const noise = Math.abs(perlin.noise.simplex2(x, y))
       const randomX = getRandom(10, this.width)
       const randomY = getRandom(10, this.height)
@@ -320,6 +324,7 @@ class Room {
       ) {
         const possiblePosition = { possibleX, possibleY, usedWidth:  element.width, usedHeight: element.height }
         this.usedPositions.push(possiblePosition)
+        console.log({possiblePosition, usedPositions: this.usedPositions })
         return { possibleX, possibleY, set: true }
       } else if (tries <= maxTries) {
         return findPosition(element)
